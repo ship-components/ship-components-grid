@@ -127,19 +127,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Grid = function (_Component) {
 	  _inherits(Grid, _Component);
 	
-	  function Grid() {
+	  function Grid(props) {
 	    _classCallCheck(this, Grid);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Grid).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Grid).call(this, props));
+	
+	    _this.forceLayout = _this.forceLayout.bind(_this);
+	    return _this;
 	  }
+	
+	  /**
+	   * Setup
+	   * @return {[type]} [description]
+	   */
 	
 	  _createClass(Grid, [{
 	    key: 'componentDidMount',
-	
-	    /**
-	     * Setup
-	     * @return {[type]} [description]
-	     */
 	    value: function componentDidMount() {
 	      if (this.masonry || this.props.disabled || !isBrowser) {
 	        return;
@@ -191,6 +194,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	      setTimeout(function () {
 	        window.dispatchEvent(new Event('resize'));
 	      }, 1);
+	    }
+	
+	    /**
+	     * Allow external components to froce the layout to update
+	     */
+	
+	  }, {
+	    key: 'forceLayout',
+	    value: function forceLayout() {
+	      this.masonry.layout();
 	    }
 	
 	    /**

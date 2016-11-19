@@ -14,6 +14,10 @@ const isBrowser = typeof window !== 'undefined';
  * Masonry React Component for dynampic grids
  */
 export default class Grid extends Component {
+  constructor(props) {
+    super(props);
+    this.forceLayout = this.forceLayout.bind(this);
+  }
 
   /**
    * Setup
@@ -67,6 +71,13 @@ export default class Grid extends Component {
     setTimeout(function() {
       window.dispatchEvent(new Event('resize'));
     }, 1);
+  }
+
+  /**
+   * Allow external components to froce the layout to update
+   */
+  forceLayout() {
+    this.masonry.layout();
   }
 
   /**
