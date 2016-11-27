@@ -16,23 +16,89 @@ const isBrowser = typeof window !== 'undefined';
 export default class Grid extends Component {
   constructor(props) {
     super(props);
+
+    // Ensure the right contexts
+    this._resizeHandler = this._resizeHandler.bind(this);
     this.forceLayout = this.forceLayout.bind(this);
+    this.setupMasonry = this.setupMasonry.bind(this);
+    this.destroyMasonry = this.destroyMasonry.bind(this);
   }
 
   /**
    * Setup
-   * @return {[type]} [description]
    */
   componentDidMount() {
-    if (this.masonry || this.props.disabled || !isBrowser) {
+    if (!isBrowser) {
       return;
     }
 
+    // Bind resize so we can make responsive checks
+    window.addEventListener('resize', this._resizeHandler);
+
+    if (typeof this.props.minWidth !== 'number' || this.props.minWidth <= 0) {
+      this.setupMasonry();
+    } else {
+      this._resizeHandler();
+    }
+  }
+
+  /**
+   * Disable masonry if we switch to disable mode
+   */
+  componentWillReceiveProps(nextProps) {
+    if (this.masonry && this.props.disabled === false && nextProps.disabled === true) {
+      this.destroyMasonry();
+    } else if (!this.masonry && this.props.disabled === true && nextProps.disabled === false){
+      this.setupMasonry();
+    }
+  }
+
+  /**
+   * Updates
+   */
+  componentDidUpdate() {
+    if (this.props.disabled || !this.masonry || !isBrowser) {
+      return;
+    }
+
+    // reload all items in container (bad for performance - should find a way
+    // to append/prepend by disabling react render)
+    this.masonry.reloadItems();
+
+    if (this.props.imagesLoaded) {
+      // relayout again when images are loaded
+      this.reloadWhenImagesAreLoaded();
+    } else {
+      // relayout after reloading items
+      this.masonry.layout();
+    }
+
+    // force resize event
+    setTimeout(function() {
+      window.dispatchEvent(new Event('resize'));
+    }, 1);
+  }
+
+  /**
+   * Cleanup
+   */
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._resizeHandler);
+    this.destroyMasonry();
+  }
+
+  /**
+   * Setup masonry but only if were not already setup or disabled
+   */
+  setupMasonry() {
+    if (this.props.disabled || this.masonry) {
+      return;
+    }
     let el = ReactDOM.findDOMNode(this.refs.container);
 
     // create masonry for specified container
     this.masonry = new Masonry(el, {
-      transitionDuration: 0,
+      transitionDuration: this.props.transitionDuration,
       fitWidth: this.props.fitWidth,
       itemSelector: this.props.itemSelector,
       columnWidth: this.props.columnWidth,
@@ -48,33 +114,31 @@ export default class Grid extends Component {
   }
 
   /**
-   * Update
+   * Disable and cleanup
    */
-  componentDidUpdate() {
-    if (!this.masonry || !isBrowser) {
-      return;
+  destroyMasonry() {
+    if (this.masonry) {
+      this.masonry.destroy();
+      delete this.masonry;
     }
-
-    // reload all items in container (bad for performance - should find a way
-    // to append/prepend by disabling react render)
-    this.masonry.reloadItems();
-
-    // relayout after reloading items
-    this.masonry.layout();
-
-    // relayout again when images are loaded
-    if (this.props.imagesLoaded) {
-      this.reloadWhenImagesAreLoaded();
-    }
-
-    // force resize event
-    setTimeout(function() {
-      window.dispatchEvent(new Event('resize'));
-    }, 1);
   }
 
   /**
-   * Allow external components to froce the layout to update
+   * Responsive toggle
+   */
+  _resizeHandler() {
+    if (typeof this.props.minWidth !== 'number' || this.props.minWidth <= 0) {
+      return;
+    }
+    if (window.innerWidth < this.props.minWidth) {
+      this.destroyMasonry();
+    } else {
+      this.setupMasonry();
+    }
+  }
+
+  /**
+   * Used to allow external components to update the grid using refs
    */
   forceLayout() {
     this.masonry.layout();
@@ -128,5 +192,7 @@ Grid.defaultProps = {
   fitWidth: false,
   itemSelector: '.ship-components-grid--item',
   component: 'div',
-  percentPosition: false
+  percentPosition: false,
+  transitionDuration: 0,
+  minWidth: 0
 };

@@ -25,6 +25,9 @@ export default class View extends React.Component {
           return (
             <div
               key={item.id}
+              // Grid appends a classname to all children. It's required for
+              // masonry to work.
+              className={item.className}
             />
           )
         })}
