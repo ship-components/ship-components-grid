@@ -141,7 +141,9 @@ export default class Grid extends Component {
    * Used to allow external components to update the grid using refs
    */
   forceLayout() {
-    this.masonry.layout();
+    if (this.masonry) {
+      this.masonry.layout();
+    }
   }
 
   /**

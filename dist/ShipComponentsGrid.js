@@ -130,29 +130,106 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function Grid(props) {
 	    _classCallCheck(this, Grid);
 	
+	    // Ensure the right contexts
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Grid).call(this, props));
 	
+	    _this._resizeHandler = _this._resizeHandler.bind(_this);
 	    _this.forceLayout = _this.forceLayout.bind(_this);
+	    _this.setupMasonry = _this.setupMasonry.bind(_this);
+	    _this.destroyMasonry = _this.destroyMasonry.bind(_this);
 	    return _this;
 	  }
 	
 	  /**
 	   * Setup
-	   * @return {[type]} [description]
 	   */
 	
 	  _createClass(Grid, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      if (this.masonry || this.props.disabled || !isBrowser) {
+	      if (!isBrowser) {
 	        return;
 	      }
 	
+	      // Bind resize so we can make responsive checks
+	      window.addEventListener('resize', this._resizeHandler);
+	
+	      if (typeof this.props.minWidth !== 'number' || this.props.minWidth <= 0) {
+	        this.setupMasonry();
+	      } else {
+	        this._resizeHandler();
+	      }
+	    }
+	
+	    /**
+	     * Disable masonry if we switch to disable mode
+	     */
+	
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      if (this.masonry && this.props.disabled === false && nextProps.disabled === true) {
+	        this.destroyMasonry();
+	      } else if (!this.masonry && this.props.disabled === true && nextProps.disabled === false) {
+	        this.setupMasonry();
+	      }
+	    }
+	
+	    /**
+	     * Updates
+	     */
+	
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      if (this.props.disabled || !this.masonry || !isBrowser) {
+	        return;
+	      }
+	
+	      // reload all items in container (bad for performance - should find a way
+	      // to append/prepend by disabling react render)
+	      this.masonry.reloadItems();
+	
+	      if (this.props.imagesLoaded) {
+	        // relayout again when images are loaded
+	        this.reloadWhenImagesAreLoaded();
+	      } else {
+	        // relayout after reloading items
+	        this.masonry.layout();
+	      }
+	
+	      // force resize event
+	      setTimeout(function () {
+	        window.dispatchEvent(new Event('resize'));
+	      }, 1);
+	    }
+	
+	    /**
+	     * Cleanup
+	     */
+	
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      window.removeEventListener('resize', this._resizeHandler);
+	      this.destroyMasonry();
+	    }
+	
+	    /**
+	     * Setup masonry but only if were not already setup or disabled
+	     */
+	
+	  }, {
+	    key: 'setupMasonry',
+	    value: function setupMasonry() {
+	      if (this.props.disabled || this.masonry) {
+	        return;
+	      }
 	      var el = _reactDom2.default.findDOMNode(this.refs.container);
 	
 	      // create masonry for specified container
 	      this.masonry = new _masonryLayout2.default(el, {
-	        transitionDuration: 0,
+	        transitionDuration: this.props.transitionDuration,
 	        fitWidth: this.props.fitWidth,
 	        itemSelector: this.props.itemSelector,
 	        columnWidth: this.props.columnWidth,
@@ -168,42 +245,45 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Update
+	     * Disable and cleanup
 	     */
 	
 	  }, {
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate() {
-	      if (!this.masonry || !isBrowser) {
-	        return;
+	    key: 'destroyMasonry',
+	    value: function destroyMasonry() {
+	      if (this.masonry) {
+	        this.masonry.destroy();
+	        delete this.masonry;
 	      }
-	
-	      // reload all items in container (bad for performance - should find a way
-	      // to append/prepend by disabling react render)
-	      this.masonry.reloadItems();
-	
-	      // relayout after reloading items
-	      this.masonry.layout();
-	
-	      // relayout again when images are loaded
-	      if (this.props.imagesLoaded) {
-	        this.reloadWhenImagesAreLoaded();
-	      }
-	
-	      // force resize event
-	      setTimeout(function () {
-	        window.dispatchEvent(new Event('resize'));
-	      }, 1);
 	    }
 	
 	    /**
-	     * Allow external components to froce the layout to update
+	     * Responsive toggle
+	     */
+	
+	  }, {
+	    key: '_resizeHandler',
+	    value: function _resizeHandler() {
+	      if (typeof this.props.minWidth !== 'number' || this.props.minWidth <= 0) {
+	        return;
+	      }
+	      if (window.innerWidth < this.props.minWidth) {
+	        this.destroyMasonry();
+	      } else {
+	        this.setupMasonry();
+	      }
+	    }
+	
+	    /**
+	     * Used to allow external components to update the grid using refs
 	     */
 	
 	  }, {
 	    key: 'forceLayout',
 	    value: function forceLayout() {
-	      this.masonry.layout();
+	      if (this.masonry) {
+	        this.masonry.layout();
+	      }
 	    }
 	
 	    /**
@@ -265,7 +345,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  fitWidth: false,
 	  itemSelector: '.ship-components-grid--item',
 	  component: 'div',
-	  percentPosition: false
+	  percentPosition: false,
+	  transitionDuration: 0,
+	  minWidth: 0
 	};
 
 /***/ },
