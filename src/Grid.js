@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import Masonry from 'masonry-layout';
 import imagesLoaded from 'imagesloaded';
@@ -94,10 +93,9 @@ export default class Grid extends Component {
     if (this.props.disabled || this.masonry) {
       return;
     }
-    let el = ReactDOM.findDOMNode(this.refs.container);
 
     // create masonry for specified container
-    this.masonry = new Masonry(el, {
+    this.masonry = new Masonry(this.refs.container, {
       transitionDuration: this.props.transitionDuration,
       fitWidth: this.props.fitWidth,
       itemSelector: this.props.itemSelector,
@@ -154,9 +152,8 @@ export default class Grid extends Component {
       return;
     }
 
-    let el = ReactDOM.findDOMNode(this.refs.container);
-    imagesLoaded(el, () => {
-      this.masonry.layout();
+    imagesLoaded(this.refs.container, () => {
+      this.forceLayout();
     });
   }
 

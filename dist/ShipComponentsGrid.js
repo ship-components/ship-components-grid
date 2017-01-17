@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("React"), require("react-dom"), require("classnames"), require("masonry-layout"), require("imagesloaded"));
+		module.exports = factory(require("React"), require("classnames"), require("masonry-layout"), require("imagesloaded"));
 	else if(typeof define === 'function' && define.amd)
-		define(["React", "react-dom", "classnames", "masonry-layout", "imagesloaded"], factory);
+		define(["React", "classnames", "masonry-layout", "imagesloaded"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("React"), require("react-dom"), require("classnames"), require("masonry-layout"), require("imagesloaded")) : factory(root["React"], root["react-dom"], root["classnames"], root["masonry-layout"], root["imagesloaded"]);
+		var a = typeof exports === 'object' ? factory(require("React"), require("classnames"), require("masonry-layout"), require("imagesloaded")) : factory(root["React"], root["classnames"], root["masonry-layout"], root["imagesloaded"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -76,19 +76,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(2);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _classnames = __webpack_require__(3);
+	var _classnames = __webpack_require__(2);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _masonryLayout = __webpack_require__(4);
+	var _masonryLayout = __webpack_require__(3);
 	
 	var _masonryLayout2 = _interopRequireDefault(_masonryLayout);
 	
-	var _imagesloaded = __webpack_require__(5);
+	var _imagesloaded = __webpack_require__(4);
 	
 	var _imagesloaded2 = _interopRequireDefault(_imagesloaded);
 	
@@ -225,10 +221,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.props.disabled || this.masonry) {
 	        return;
 	      }
-	      var el = _reactDom2.default.findDOMNode(this.refs.container);
 	
 	      // create masonry for specified container
-	      this.masonry = new _masonryLayout2.default(el, {
+	      this.masonry = new _masonryLayout2.default(this.refs.container, {
 	        transitionDuration: this.props.transitionDuration,
 	        fitWidth: this.props.fitWidth,
 	        itemSelector: this.props.itemSelector,
@@ -299,9 +294,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	      }
 	
-	      var el = _reactDom2.default.findDOMNode(this.refs.container);
-	      (0, _imagesloaded2.default)(el, function () {
-	        _this2.masonry.layout();
+	      (0, _imagesloaded2.default)(this.refs.container, function () {
+	        _this2.forceLayout();
 	      });
 	    }
 	
@@ -373,12 +367,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
 
 /***/ }
 /******/ ])

@@ -89,8 +89,10 @@ Below are is a sample of how to setup the loaders:
 2. `npm test`
 
 ## History
-0.2.1 - Added a fix to not update layout when masonry isn't active
-0.1.0 - Initial
+* 0.2.2 - Added more fixes for narrow screens
+* 0.2.1 - Added a fix to not update layout when masonry isn't active
+* 0.2.0 - Added option to disable under certain widths
+* 0.1.0 - Initial
 
 ## License
 The MIT License (MIT)
