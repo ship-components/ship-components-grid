@@ -1,6 +1,6 @@
 {
   "name": "ship-components-grid",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "React Masonry Component",
   "main": "src/Grid.js",
   "scripts": {
@@ -22,6 +22,16 @@
     "url": "https://github.com/ship-components/ship-components-grid/issues"
   },
   "homepage": "https://github.com/ship-components/ship-components-grid#readme",
+  "contributors": [
+    {
+      "name": "Isaac Suttell",
+      "email": "isaac.suttell@sony.com"
+    },
+    {
+      "name": "Sepand Assadi",
+      "email": "sepand.assadi@sony.com"
+    }
+  ],
   "devDependencies": {
     "babel-core": "^6.13.2",
     "babel-eslint": "^6.1.2",
