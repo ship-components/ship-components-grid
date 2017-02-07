@@ -21,6 +21,8 @@ export default class Grid extends Component {
     this.forceLayout = this.forceLayout.bind(this);
     this.setupMasonry = this.setupMasonry.bind(this);
     this.destroyMasonry = this.destroyMasonry.bind(this);
+    this.isIE10 = navigator.appVersion.indexOf('MSIE 10') !== -1;
+    this.isIE11 = navigator.appVersion.indexOf('Trident') !== -1;
   }
 
   /**
@@ -32,7 +34,13 @@ export default class Grid extends Component {
     }
 
     // Bind resize so we can make responsive checks
-    window.addEventListener('resize', this._resizeHandler);
+    // IE10 browsers
+    if(this.isIE10) {
+      window.attachEvent('onresize', this._resizeHandler);
+    } else {
+      // Other browsers
+      window.addEventListener('resize', this._resizeHandler);
+    }
 
     if (typeof this.props.minWidth !== 'number' || this.props.minWidth <= 0) {
       this.setupMasonry();
@@ -72,9 +80,23 @@ export default class Grid extends Component {
       this.masonry.layout();
     }
 
-    // force resize event
+    let event = null;
+    // IE10 or IE11
+    if(this.isIE10) {
+      event = document.createEvent('Event');
+      event.initEvent('onresize', false, true);
+      // args: string type, boolean bubbles, boolean cancelable
+    } else if (this.isIE11) {
+      event = document.createEvent('Event');
+      event.initEvent('resize', false, true);
+    } else {
+      // Other browsers
+      event = new Event('resize');
+    }
+
+   // force resize event
     setTimeout(function() {
-      window.dispatchEvent(new Event('resize'));
+      window.dispatchEvent(event);
     }, 1);
   }
 
@@ -82,7 +104,14 @@ export default class Grid extends Component {
    * Cleanup
    */
   componentWillUnmount() {
-    window.removeEventListener('resize', this._resizeHandler);
+    // IE10 browsers
+    if(this.isIE10) {
+      window.detachEvent('onresize', this._resizeHandler);
+    } else {
+      // Other browsers
+      window.removeEventListener('resize', this._resizeHandler);
+    }
+
     this.destroyMasonry();
   }
 
