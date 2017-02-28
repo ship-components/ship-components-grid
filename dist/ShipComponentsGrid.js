@@ -56,7 +56,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -127,12 +127,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _classCallCheck(this, Grid);
 	
 	    // Ensure the right contexts
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Grid).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Grid.__proto__ || Object.getPrototypeOf(Grid)).call(this, props));
 	
 	    _this._resizeHandler = _this._resizeHandler.bind(_this);
 	    _this.forceLayout = _this.forceLayout.bind(_this);
 	    _this.setupMasonry = _this.setupMasonry.bind(_this);
 	    _this.destroyMasonry = _this.destroyMasonry.bind(_this);
+	    _this.isIE10 = navigator.appVersion.indexOf('MSIE 10') !== -1;
+	    _this.isIE11 = navigator.appVersion.indexOf('Trident') !== -1;
 	    return _this;
 	  }
 	
@@ -148,7 +150,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	
 	      // Bind resize so we can make responsive checks
-	      window.addEventListener('resize', this._resizeHandler);
+	      // IE10 browsers
+	      if (this.isIE10) {
+	        window.attachEvent('onresize', this._resizeHandler);
+	      } else {
+	        // Other browsers
+	        window.addEventListener('resize', this._resizeHandler);
+	      }
 	
 	      if (typeof this.props.minWidth !== 'number' || this.props.minWidth <= 0) {
 	        this.setupMasonry();
@@ -194,9 +202,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.masonry.layout();
 	      }
 	
+	      var event = null;
+	      // IE10 or IE11
+	      if (this.isIE10) {
+	        event = document.createEvent('Event');
+	        event.initEvent('onresize', false, true);
+	        // args: string type, boolean bubbles, boolean cancelable
+	      } else if (this.isIE11) {
+	        event = document.createEvent('Event');
+	        event.initEvent('resize', false, true);
+	      } else {
+	        // Other browsers
+	        event = new Event('resize');
+	      }
+	
 	      // force resize event
 	      setTimeout(function () {
-	        window.dispatchEvent(new Event('resize'));
+	        window.dispatchEvent(event);
 	      }, 1);
 	    }
 	
@@ -207,7 +229,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
-	      window.removeEventListener('resize', this._resizeHandler);
+	      // IE10 browsers
+	      if (this.isIE10) {
+	        window.detachEvent('onresize', this._resizeHandler);
+	      } else {
+	        // Other browsers
+	        window.removeEventListener('resize', this._resizeHandler);
+	      }
+	
 	      this.destroyMasonry();
 	    }
 	
