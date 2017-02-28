@@ -1,12 +1,14 @@
 {
   "name": "ship-components-grid",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "React Masonry Component",
   "main": "src/Grid.js",
   "scripts": {
     "start": "grunt server",
     "build": "grunt build",
-    "test": "grunt lint && ./node_modules/jest-cli/bin/jest.js src/ --coverage"
+    "lint": "./node_modules/eslint/bin/eslint.js src/*.jsx",
+    "test": "grunt lint && ./node_modules/jest-cli/bin/jest.js --coverage",
+    "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js -v"
   },
   "repository": {
     "type": "git",
@@ -49,6 +51,7 @@
     "eslint-loader": "^1.5.0",
     "eslint-plugin-react": "^6.1.2",
     "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-eslint": "^19.0.0",
     "grunt-webpack": "^1.0.14",
@@ -62,25 +65,18 @@
     "webpack-dev-server": "^1.15.0"
   },
   "jest": {
-    "scriptPreprocessor": "node_modules/babel-jest",
-    "testFileExtensions": [
-      "es6",
-      "jsx",
-      "js"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json",
-      "es6"
-    ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(css)$": "<rootDir>/node_modules/jest-css-modules"
+    },
     "unmockedModulePathPatterns": [
       "<rootDir>/node_modules/classnames",
       "<rootDir>/node_modules/react",
       "<rootDir>/node_modules/fbjs",
       "<rootDir>/node_modules/react-dom",
-      "<rootDir>/node_modules/react-addons-test-utils",
-      "<rootDir>/node_modules/bluebird"
+      "<rootDir>/node_modules/react-addons-test-utils"
     ]
   },
   "babelJest": {
