@@ -15,7 +15,10 @@ function blocks(size) {
   let results = [];
   for (let i = 0; i < size; i++) {
     results.push(
-      <div className='grid--item' />
+      <div
+        className='grid--item'
+        key ={i}
+      />
     );
   }
   return results;
@@ -23,6 +26,7 @@ function blocks(size) {
 
 class Examples extends React.Component {
   render() {
+
     return (
       <div>
         <h1>Examples</h1>

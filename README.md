@@ -89,6 +89,7 @@ Below are is a sample of how to setup the loaders:
 2. `npm test`
 
 ## History
+* 0.2.4 - Updates Jests, Travis CI and Coveralls as well as minor ESLint and React warning messages
 * 0.2.3 - Added Internet Explorer(10 & 11) onResize event support
 * 0.2.2 - Added more fixes for narrow screens
 * 0.2.1 - Added a fix to not update layout when masonry isn't active
