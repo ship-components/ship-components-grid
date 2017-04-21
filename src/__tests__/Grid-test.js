@@ -2,7 +2,7 @@ jest.unmock('../Grid');
 jest.unmock('masonry-layout');
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import Grid from '../Grid';
 
 describe('Grid', function(){
