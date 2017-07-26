@@ -89,6 +89,7 @@ Below are is a sample of how to setup the loaders:
 2. `npm test`
 
 ## History
+* 0.3.0 - Updates to the latest babel configurations (babel-preset-env)
 * 0.2.4 - Updates Jests, Travis CI and Coveralls as well as minor ESLint and React warning messages
 * 0.2.3 - Added Internet Explorer(10 & 11) onResize event support
 * 0.2.2 - Added more fixes for narrow screens
